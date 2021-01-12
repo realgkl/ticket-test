@@ -11,7 +11,6 @@ import {
   BizWSError,
   RobotaxiDriverOrderEventCode,
   RobotaxiDriverOrderInService,
-  RobotaxiDriverOrderState,
 } from '@utc-api-js/core';
 
 const biz = new RobotaxiDriverBiz();
@@ -77,7 +76,8 @@ const testReducer: Reducer<TestState, TestAction> = (state, action) => {
     case TestActions.SetOrder:
       return {
         ...state,
-        order: action.order,
+        order: action?.order,
+        code: action?.order?.eventCode || state.code,
       };
   }
 
@@ -149,17 +149,20 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
             AntdMessage.info('用户取消订单');
             reset();
             break;
-          case RobotaxiDriverOrderEventCode.UserOrderConfirmed:
+          case RobotaxiDriverOrderEventCode.UserOrderConfirmed: {
             AntdMessage.info('已接收到订单');
             const order = await biz.getInServiceOrder();
             setOrder(order);
             break;
-          case RobotaxiDriverOrderEventCode.ArrivedPickUp:
+          }
+          case RobotaxiDriverOrderEventCode.ArrivedPickUp: {
             AntdMessage.info('车辆达到上车点');
             break;
-          case RobotaxiDriverOrderEventCode.UserPickUp:
+          }
+          case RobotaxiDriverOrderEventCode.UserPickUp: {
             AntdMessage.info('用户已上车');
             break;
+          }
           default:
             AntdMessage.info('订单出错');
             cancel(orderId);
@@ -226,7 +229,23 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
     if (orderId === '') return;
     try {
       await biz.arrivedPickUp(orderId);
+      const order = await biz.getInServiceOrder();
+      setOrder(order);
+      console.log(order);
       AntdMessage.info('到达上车点');
+    } catch (e) {
+      AntdMessage.error(e.message);
+    }
+  };
+
+  const pickUp = async (orderId: string): Promise<void> => {
+    if (orderId === '') return;
+    try {
+      await biz.pickUp(orderId);
+      const order = await biz.getInServiceOrder();
+      setOrder(order);
+      console.log(order);
+      AntdMessage.info('用户上车');
     } catch (e) {
       AntdMessage.error(e.message);
     }
@@ -254,7 +273,6 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
       [
         RobotaxiDriverOrderEventCode.ArrivedPickUp,
         RobotaxiDriverOrderEventCode.UserPickUp,
-        RobotaxiDriverOrderEventCode.UserOrderNotCompleted,
       ].indexOf(state.code) === -1 && state.orderId !== '',
     [state.code, state.orderId],
   );
@@ -315,10 +333,7 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
           >
             到达上车点
           </Button>
-          <Button
-            disabled={!canCompleted}
-            onClick={() => complete(state.orderId)}
-          >
+          <Button disabled={!canPickUp} onClick={() => pickUp(state.orderId)}>
             上车
           </Button>
           <Button
