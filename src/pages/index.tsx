@@ -12,12 +12,21 @@ import { DriverTestView } from './components/driver';
 import styles from './index.less';
 
 const wsConfig: BizWSConifg = {
-  ssl: false,
-  host: '127.0.0.1',
-  port: 8080,
-  base: '/order/ws',
+  ssl: true,
+  host: 'ucloud.uisee.cn',
+  port: 30123,
+  base: '/api/test/order/ws',
   debug: true,
 };
+
+const groupId = '917ea77f-3932-11eb-ae58-1a1b512b9a7c';
+const defAuthToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTE2NTI0MzUsImlhdCI6MTYxMDQ0MjgzNSwiaXNzIjoib3dDWldFVEh5cHhlWkNaT3dOVHdwZlY4WFVnZkdWNTQiLCJuYmYiOjE2MTA0NDI4MzUsInVpZCI6ImdrbDEwMzg1LmRvbmdmZW5nLXJvYm90YXhpIn0.ZOMlLtICugjHbterz5SnmR_HprfWDnOClPsbXpOuf8U`;
+const urlAuthToken = new URL(location.href).searchParams.get('authToken');
+const authToken = urlAuthToken ? urlAuthToken : defAuthToken;
+
+document.cookie = `X-Group-UUID=${groupId}`;
+document.cookie = `auth_token=${authToken}`;
+localStorage.setItem('authToken', authToken);
 
 const TestMain: React.FC<{}> = () => {
   return (

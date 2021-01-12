@@ -13,11 +13,9 @@ export default defineConfig({
   },
   devServer: {
     proxy: {
-      '/api/test/order': {
-        pathRewrite: {
-          '/api/test': '',
-        },
-        target: 'http://127.0.0.1:8080',
+      '/api/test': {
+        target: 'https://ucloud.uisee.cn:30123',
+        secure: true,
         changeOrigin: true,
       },
     },

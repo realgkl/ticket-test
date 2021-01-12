@@ -19,6 +19,9 @@ interface TestAction extends Action {
   loading?: boolean;
   vin?: string;
   code?: number;
+  mapId?: string;
+  tripFrom?: string;
+  tripTo?: string;
 }
 
 enum TestActions {
@@ -26,6 +29,9 @@ enum TestActions {
   SetVin = 'SetVin',
   SetCode = 'SetCode',
   SetLoading = 'SetLoading',
+  SetMap = 'SetMap',
+  SetTripFrom = 'SetTripFrom',
+  SetTripTo = 'SetTripTo',
 }
 
 interface TestState {
@@ -33,6 +39,9 @@ interface TestState {
   loading: boolean;
   vin: string;
   code: number;
+  mapId: string;
+  tripFrom: string;
+  tripTo: string;
 }
 
 const defaultTestState: TestState = {
@@ -40,6 +49,9 @@ const defaultTestState: TestState = {
   orderId: '',
   vin: '',
   code: -1,
+  mapId: '2020120314',
+  tripFrom: '1',
+  tripTo: '3',
 };
 
 const testReducer: Reducer<TestState, TestAction> = (state, action) => {
@@ -63,6 +75,21 @@ const testReducer: Reducer<TestState, TestAction> = (state, action) => {
       return {
         ...state,
         code: action?.code || -1,
+      };
+    case TestActions.SetMap:
+      return {
+        ...state,
+        mapId: action?.mapId || '',
+      };
+    case TestActions.SetTripFrom:
+      return {
+        ...state,
+        tripFrom: action?.tripFrom || '',
+      };
+    case TestActions.SetTripTo:
+      return {
+        ...state,
+        tripTo: action?.tripTo || '',
       };
   }
 
@@ -90,6 +117,18 @@ export const UserTestView: React.FC<UserTestViewProps> = ({ wsConfig }) => {
   const setLoading = async (loading: boolean) =>
     dispatch({ type: TestActions.SetLoading, loading });
 
+  const setMapId = async (mapId: string) =>
+    dispatch({ type: TestActions.SetMap, mapId });
+
+  const setTripFrom = async (tripFrom: string) =>
+    dispatch({
+      type: TestActions.SetTripFrom,
+      tripFrom,
+    });
+
+  const setTripTo = async (tripTo: string) =>
+    dispatch({ type: TestActions.SetTripTo, tripTo });
+
   /**
    * mapId: 20201119
    * tripFrom: 7
@@ -97,8 +136,11 @@ export const UserTestView: React.FC<UserTestViewProps> = ({ wsConfig }) => {
    */
   const createOrder = async (): Promise<string> => {
     try {
-      // const orderId = await biz.createTripOrder('4', '2', '20201119');
-      const orderId = await biz.createTripOrder('3', '1', '20190911');
+      const orderId = await biz.createTripOrder(
+        state.tripFrom,
+        state.tripTo,
+        state.mapId,
+      );
       if (orderId == '') {
         throw new Error('order id is empty');
       }
@@ -306,6 +348,33 @@ export const UserTestView: React.FC<UserTestViewProps> = ({ wsConfig }) => {
             <Input
               value={state.orderId}
               onChange={e => setOrderId(e.target.value)}
+            />
+          </label>
+        </Row>
+        <Row>
+          <label>
+            地图 id
+            <Input
+              value={state.mapId}
+              onChange={e => setMapId(e.target.value)}
+            />
+          </label>
+        </Row>
+        <Row>
+          <label>
+            上车点
+            <Input
+              value={state.tripFrom}
+              onChange={e => setTripFrom(e.target.value)}
+            />
+          </label>
+        </Row>
+        <Row>
+          <label>
+            下车点
+            <Input
+              value={state.tripTo}
+              onChange={e => setTripTo(e.target.value)}
             />
           </label>
         </Row>

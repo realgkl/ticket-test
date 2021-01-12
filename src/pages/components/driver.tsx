@@ -24,6 +24,7 @@ interface TestAction extends Action {
   loading?: boolean;
   vin?: string;
   code?: number;
+  mapId?: string;
   order?: RobotaxiDriverOrderInService;
 }
 
@@ -31,6 +32,7 @@ enum TestActions {
   SetOrderId = 'SetOrderId',
   SetVin = 'SetVin',
   SetCode = 'SetCode',
+  SetMap = 'SetMap',
   SetLoading = 'SetLoading',
   SetOrder = 'SetOrder',
 }
@@ -41,14 +43,16 @@ interface TestState {
   vin: string;
   code: number;
   order: RobotaxiDriverOrderInService | undefined;
+  mapId: string;
 }
 
 const defaultTestState: TestState = {
   loading: false,
   orderId: '',
-  vin: 'e100.carxm.sim',
+  vin: 'e100.simu.car11',
   code: -1,
   order: undefined,
+  mapId: '2020120314',
 };
 
 const testReducer: Reducer<TestState, TestAction> = (state, action) => {
@@ -56,28 +60,33 @@ const testReducer: Reducer<TestState, TestAction> = (state, action) => {
     case TestActions.SetLoading:
       return {
         ...state,
-        loading: action?.loading || false,
+        loading: action.loading || false,
       };
     case TestActions.SetOrderId:
       return {
         ...state,
-        orderId: action?.orderId || '',
+        orderId: action.orderId || '',
       };
     case TestActions.SetVin:
       return {
         ...state,
-        vin: action?.vin || '',
+        vin: action.vin || '',
       };
     case TestActions.SetCode:
       return {
         ...state,
-        code: action?.code || -1,
+        code: action.code || -1,
       };
     case TestActions.SetOrder:
       return {
         ...state,
-        order: action?.order,
-        code: action?.order?.eventCode || state.code,
+        order: action.order,
+        code: action.order?.eventCode || state.code,
+      };
+    case TestActions.SetMap:
+      return {
+        ...state,
+        mapId: action.mapId || '',
       };
   }
 
@@ -104,9 +113,12 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
   const setOrder = async (order?: RobotaxiDriverOrderInService) =>
     dispatch({ type: TestActions.SetOrder, order });
 
+  const setMap = async (mapId: string) =>
+    dispatch({ type: TestActions.SetMap, mapId });
+
   const createOrder = async (): Promise<string> => {
     try {
-      const orderId = await biz.createOrder(state.vin, '20190911');
+      const orderId = await biz.createOrder(state.vin, state.mapId);
       if (orderId == '') {
         throw new Error('order id is empty');
       }
@@ -306,6 +318,12 @@ export const DriverTestView: React.FC<DriverTestViewProps> = ({ wsConfig }) => {
             上车点：&nbsp;&nbsp;
             {state.order?.userOrderTripFrom}&nbsp;&nbsp; 下车点：&nbsp;&nbsp;
             {state.order?.userOrderTripTo}
+          </label>
+        </Row>
+        <Row>
+          <label>
+            地图 id：
+            <Input value={state.mapId} onChange={e => setMap(e.target.value)} />
           </label>
         </Row>
         <Row>
