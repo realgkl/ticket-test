@@ -18,6 +18,13 @@ export default defineConfig({
         secure: true,
         changeOrigin: true,
       },
+      // '/api/test/order': {
+      //   pathRewrite: {
+      //     '/api/test': '',
+      //   },
+      //   target: 'http://127.0.0.1:8080',
+      //   changeOrigin: true,
+      // },
     },
   },
 });

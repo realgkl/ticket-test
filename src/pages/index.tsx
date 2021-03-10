@@ -16,6 +16,10 @@ const wsConfig: BizWSConifg = {
   host: 'ucloud.uisee.cn',
   port: 30123,
   base: '/api/test/order/ws',
+  // ssl: false,
+  // host: '127.0.0.1',
+  // port: 8080,
+  // base: '/order/ws',
   debug: true,
 };
 

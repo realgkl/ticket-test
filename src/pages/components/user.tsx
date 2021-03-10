@@ -50,6 +50,7 @@ const defaultTestState: TestState = {
   vin: '',
   code: -1,
   mapId: '2020120314',
+  // mapId: '20190911',
   tripFrom: '1',
   tripTo: '3',
 };
@@ -230,7 +231,8 @@ export const UserTestView: React.FC<UserTestViewProps> = ({ wsConfig }) => {
             AntdMessage.info('车辆达到上车点');
             break;
           case UserOrderEventCode.ArrivedGetOff:
-            AntdMessage.info('车辆达到下车点');
+            AntdMessage.info('车辆达到下车点，订单完成');
+            reset();
             break;
           case UserOrderEventCode.DriverOrderCanceled:
             AntdMessage.info('订单已被司机取消');
@@ -322,10 +324,11 @@ export const UserTestView: React.FC<UserTestViewProps> = ({ wsConfig }) => {
 
   const canCreate = useMemo(() => state.orderId === '', [state.orderId]);
 
-  const canCompleted = useMemo(
-    () => state.code === UserOrderEventCode.ArrivedGetOff,
-    [state.code],
-  );
+  // const canCompleted = useMemo(
+  //   () => state.code === UserOrderEventCode.ArrivedGetOff,
+  //   [state.code],
+  // );
+  const canCompleted = false;
 
   const canCanceled = useMemo(
     () =>

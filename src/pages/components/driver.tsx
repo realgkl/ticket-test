@@ -49,10 +49,12 @@ interface TestState {
 const defaultTestState: TestState = {
   loading: false,
   orderId: '',
-  vin: 'e100.simu.car11',
+  vin: 'e100.simu.car10',
+  // vin: 'e100.carxm.sim',
   code: -1,
   order: undefined,
   mapId: '2020120314',
+  // mapId: '20190911',
 };
 
 const testReducer: Reducer<TestState, TestAction> = (state, action) => {

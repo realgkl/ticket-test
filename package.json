@@ -22,8 +22,8 @@
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "1.x",
-    "@utc-api-js/avp": "^2.0.0",
-    "@utc-api-js/core": "^2.0.0",
+    "@utc-api-js/avp": "^2.0.3-robotaxi",
+    "@utc-api-js/core": "^2.0.3-robotaxi",
     "umi": "^3.3.3"
   },
   "devDependencies": {
